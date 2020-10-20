@@ -554,7 +554,8 @@ retry:
 	)
 	dnsData, err := cache.GetDNSData(domain)
 	if dnsData != nil && err == nil {
-		ips = dnsData.IPs
+		ips = append(ips, dnsData.IP4s...)
+		ips = append(ips, dnsData.IP6s...)
 		cnames = dnsData.CNAMEs
 	} else {
 		ips = append(ips, ip)
@@ -617,7 +618,7 @@ retry:
 		IPs:           ips,
 		CNAMEs:        cnames,
 		CDN:           isCDN,
-		Duration:      resp.Duration,
+		ResponseTime:  resp.Duration.String(),
 	}
 }
 
@@ -645,7 +646,7 @@ type Result struct {
 	Pipeline      bool           `json:"pipeline,omitempty"`
 	HTTP2         bool           `json:"http2"`
 	CDN           bool           `json:"cdn,omitempty"`
-	Duration      time.Duration  `json:"duration"`
+	ResponseTime  string         `json:"response-time"`
 }
 
 // JSON the result
